@@ -1,6 +1,6 @@
 import os
 import unittest
-from webcrawler_project.storage.persistence import save_json, load_json
+from webcrawler_project.storage.persistance import save_json, load_json
 
 class TestPersistence(unittest.TestCase):
     def setUp(self):
