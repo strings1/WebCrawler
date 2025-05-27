@@ -1,6 +1,6 @@
 import os
 from collections import defaultdict
-from ..utils.tokenizer import tokenize
+from utils.tokenizer import tokenize
 
 def build_direct_index(directory, stopwords_trie, exceptions_trie):
     index = {}

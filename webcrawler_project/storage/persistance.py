@@ -1,6 +1,6 @@
 import json
 import os
-from ..utils.logger import get_logger
+from utils.logger import get_logger
 
 
 # Persistence module for saving and loading JSON data when restarting the application. :)
