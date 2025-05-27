@@ -6,17 +6,15 @@ from utils.logger import get_logger
 logger = get_logger("Downloader")
 
 class DownloaderThread:
-    def __init__(self, scheduler, max_pages):
-        self.scheduler = scheduler
-        self.saved = 0
-        self.max_pages = max_pages
+    def __init__(self, manager):
+        self.manager = manager
 
     def run(self):
-        while self.scheduler.has_next() and self.saved < self.max_pages:
-            url = self.scheduler.get_url()
+        while self.manager.has_next() and self.manager.should_continue():
+            url = self.manager.get_url()
             text, links = fetch(url)
             if text:
-                save_page(text, self.saved)
-                self.saved += 1
+                index = self.manager.increment_saved()
+                save_page(text, index)
                 for link in links:
-                    self.scheduler.add_url(link)
+                    self.manager.add_url(link)

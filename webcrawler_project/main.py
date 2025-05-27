@@ -1,17 +1,18 @@
 from config import START_URLS, THREAD_COUNT, MAX_WEB_PAGES
 from crawler.scheduler import Scheduler
 from crawler.downloader_thread import DownloaderThread
+from crawler.manager import CrawlManager
 import threading
 
 def start_crawling():
-    scheduler = Scheduler()
+    manager = CrawlManager(MAX_WEB_PAGES)
     for url in START_URLS:
-        scheduler.add_url(url)
+        manager.add_url(url)
 
     threads = []
     for _ in range(THREAD_COUNT):
-        downloader = DownloaderThread(scheduler, MAX_WEB_PAGES // THREAD_COUNT)
-        t = threading.Thread(target=downloader.run)
+        d = DownloaderThread(manager)
+        t = threading.Thread(target=d.run)
         t.start()
         threads.append(t)
 
