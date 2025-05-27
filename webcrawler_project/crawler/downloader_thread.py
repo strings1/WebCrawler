@@ -10,7 +10,10 @@ class DownloaderThread:
         self.manager = manager
 
     def run(self):
-        while self.manager.has_next() and self.manager.should_continue():
+        while self.manager.should_continue():
+            if not self.manager.has_next():
+                continue    # astept sa fie adaugate URL-uri in coada
+
             url = self.manager.get_url()
             text, links = fetch(url)
             if text:
