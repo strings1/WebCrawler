@@ -1,7 +1,7 @@
-from crawler.fetcher import fetch
-from storage.file_manager import save_page
-from config import MAX_WEB_PAGES
-from utils.logger import get_logger
+from webcrawler_project.crawler.fetcher import fetch
+from webcrawler_project.storage.file_manager import save_page
+from webcrawler_project.utils.logger import get_logger
+import time
 
 logger = get_logger("Downloader")
 
@@ -10,14 +10,20 @@ class DownloaderThread:
         self.manager = manager
 
     def run(self):
-        while self.manager.should_continue():
+        while True:
+            if not self.manager.should_continue():
+                break
+
             if not self.manager.has_next():
-                continue    # astept sa fie adaugate URL-uri in coada
+                time.sleep(0.01)
+                continue
 
             url = self.manager.get_url()
             text, links = fetch(url)
             if text:
                 index = self.manager.increment_saved()
+                if index is None:
+                    break
                 save_page(text, index)
                 for link in links:
                     self.manager.add_url(link)

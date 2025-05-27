@@ -1,12 +1,12 @@
-from config import START_URLS, THREAD_COUNT, MAX_WEB_PAGES
-from crawler.scheduler import Scheduler
-from crawler.downloader_thread import DownloaderThread
-from crawler.manager import CrawlManager
+from webcrawler_project.config import START_URLS, THREAD_COUNT, MAX_WEB_PAGES
+from webcrawler_project.crawler.scheduler import Scheduler
+from webcrawler_project.crawler.downloader_thread import DownloaderThread
+from webcrawler_project.crawler.manager import CrawlManager
 import threading
-from utils.trie import Trie
-from index.direct_index import build_direct_index
-from index.inverted_index import build_inverted_index
-from storage.persistance import save_json
+from webcrawler_project.utils.trie import Trie
+from webcrawler_project.index.direct_index import build_direct_index
+from webcrawler_project.index.inverted_index import build_inverted_index
+from webcrawler_project.storage.persistance import save_json
 import os
 
 def start_crawling():

@@ -1,6 +1,6 @@
 import math
 from collections import defaultdict
-from ..utils.tokenizer import tokenize
+from webcrawler_project.utils.tokenizer import tokenize
 
 def compute_cosine_similarity(doc_vec, query_vec):
     """

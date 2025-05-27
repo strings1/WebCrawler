@@ -1,5 +1,5 @@
 from threading import Lock
-from crawler.scheduler import Scheduler
+from webcrawler_project.crawler.scheduler import Scheduler
 
 class CrawlManager:
     """
@@ -26,5 +26,7 @@ class CrawlManager:
 
     def increment_saved(self):
         with self.lock:
+            if self.saved_pages >= self.max_pages:
+                return None
             self.saved_pages += 1
-            return self.saved_pages
+            return self.saved_pages - 1

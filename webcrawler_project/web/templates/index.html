@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebCrawler Config</title>
+</head>
+<body>
+    <h2>Configure the WebCrawler</h2>
+    <form method="POST">
+        <label>Start URL:</label><br>
+        <input type="text" name="start_url" value="https://www.robotstxt.org/"><br><br>
+
+        <label>Output Directory:</label><br>
+        <input type="text" name="output_dir" value="web_pages"><br><br>
+
+        <label>Max Pages:</label><br>
+        <input type="number" name="max_pages" value="100"><br><br>
+
+        <label>Thread Count:</label><br>
+        <input type="number" name="thread_count" value="5"><br><br>
+
+        {% if is_crawling %}
+            <p style="color: green;">✅ Crawling in progress...</p>
+        {% else %}
+            <p style="color: red;">🔴 Crawler stopped.</p>
+        {% endif %}
+
+        <button type="submit">Start Crawl</button>
+    </form>
+</body>
+</html>
