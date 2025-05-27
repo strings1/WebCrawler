@@ -8,6 +8,7 @@ from webcrawler_project.crawler.downloader_thread import DownloaderThread
 from webcrawler_project.index.direct_index import build_direct_index
 from webcrawler_project.index.inverted_index import build_inverted_index
 from webcrawler_project.utils.trie import Trie
+from webcrawler_project.search.boolean_search import boolean_search
 
 
 app = Flask(__name__)
@@ -74,6 +75,17 @@ def index():
         return redirect(url_for("index"))
 
     return render_template("index.html", is_crawling=is_crawling)
+
+
+@app.route("/search")
+def search():
+    query = request.args.get("query", "")
+    if not query or not loaded_indexes["inverted_index"]:
+        return render_template("search_results.html", query=query, results=[])
+
+    all_docs = set(loaded_indexes["direct_index"].keys())
+    results = boolean_search(query, loaded_indexes["inverted_index"], all_docs)
+    return render_template("search_results.html", query=query, results=sorted(results))
 
 if __name__ == "__main__":
     app.run(debug=True)
