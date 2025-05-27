@@ -1,3 +1,4 @@
 *temp*
 web_pages
 *.vscode*
+**/__pycache__/*
