@@ -29,12 +29,16 @@
     </form>
 
     <hr>
-    <h2>Search in Inverted Index</h2>
+    <h2>Search in Index</h2>
     <form method="GET" action="/search">
-      <label>Query:</label><br>
-      <input type="text" name="query" style="width: 400px;" required>
-      <br><br>
-      <button type="submit">Search</button>
+    <label>Query:</label><br>
+    <input type="text" name="query" style="width: 400px;" required><br><br>
+
+    <label>Search Mode:</label><br>
+    <input type="radio" name="mode" value="boolean" checked> Boolean
+    <input type="radio" name="mode" value="vectorial"> Vectorial<br><br>
+
+    <button type="submit">Search</button>
     </form>
 </body>
 </html>

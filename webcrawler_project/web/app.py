@@ -9,6 +9,7 @@ from webcrawler_project.index.direct_index import build_direct_index
 from webcrawler_project.index.inverted_index import build_inverted_index
 from webcrawler_project.utils.trie import Trie
 from webcrawler_project.search.boolean_search import boolean_search
+from webcrawler_project.search.vectorial_search import vectorial_search
 
 
 app = Flask(__name__)
@@ -80,12 +81,25 @@ def index():
 @app.route("/search")
 def search():
     query = request.args.get("query", "")
+    mode = request.args.get("mode", "boolean")
+    results = []
+
     if not query or not loaded_indexes["inverted_index"]:
         return render_template("search_results.html", query=query, results=[])
 
-    all_docs = set(loaded_indexes["direct_index"].keys())
-    results = boolean_search(query, loaded_indexes["inverted_index"], all_docs)
-    return render_template("search_results.html", query=query, results=sorted(results))
+    if mode == "boolean":
+        all_docs = set(loaded_indexes["direct_index"].keys())
+        results = boolean_search(query, loaded_indexes["inverted_index"], all_docs)
+        results = [(doc, None) for doc in sorted(results)]  # scor None
+    elif mode == "vectorial":
+        stop = Trie()
+        exc = Trie()
+        for w in ["the", "and", "is", "to", "in"]: stop.insert(w)
+        for w in ["python", "webcrawler", "2024"]: exc.insert(w)
+
+        results = vectorial_search(query, loaded_indexes["inverted_index"], stop, exc)
+
+    return render_template("search_results.html", query=query, results=results, mode=mode)
 
 if __name__ == "__main__":
     app.run(debug=True)

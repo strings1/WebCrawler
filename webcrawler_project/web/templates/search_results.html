@@ -5,17 +5,23 @@
     <title>Search Results</title>
 </head>
 <body>
-    <h2>Results for: "{{ query }}"</h2>
+    <h2>Results for: "{{ query }}" ({{ mode }})</h2>
+
     {% if results %}
         <ul>
-            {% for doc in results %}
-                <li>{{ doc }}</li>
+            {% for doc, score in results %}
+                <li>
+                    {{ doc }}
+                    {% if score is not none %}
+                        — score: {{ "%.4f"|format(score) }}
+                    {% endif %}
+                </li>
             {% endfor %}
         </ul>
     {% else %}
         <p>No documents found.</p>
     {% endif %}
-    <br>
-    <a href="{{ url_for('index') }}">← Back to configuration</a>
+
+    <br><a href="{{ url_for('index') }}">← Back</a>
 </body>
 </html>
