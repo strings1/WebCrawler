@@ -3,3 +3,4 @@ web_pages
 *.vscode*
 **/__pycache__/*
 *.pyc
+indexes
