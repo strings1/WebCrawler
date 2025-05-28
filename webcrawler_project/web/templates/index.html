@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>WebCrawler Config</title>
+    <!-- {% if is_crawling %}
+    <meta http-equiv="refresh" content="2">
+    {% endif %} -->
 </head>
 <body>
     <h2>Configure the WebCrawler</h2>
@@ -19,15 +22,31 @@
         <label>Thread Count:</label><br>
         <input type="number" name="thread_count" value="5"><br><br>
 
-        {% if is_crawling %}
-            <p style="color: green;">✅ Crawling in progress...</p>
-        {% else %}
-            <p style="color: red;">🔴 Crawler stopped.</p>
-        {% endif %}
+        <span id="crawler-status">
+            {% if is_crawling %}
+                <p style="color: green;">✅ Crawling in progress...</p>
+            {% else %}
+                <p style="color: red;">🔴 Crawler stopped.</p>
+            {% endif %}
+        </span>
 
         <button type="submit">Start Crawl</button>
     </form>
-
+    <script>
+    function updateStatus() {
+        fetch('/status')
+            .then(response => response.json())
+            .then(data => {
+                let statusSpan = document.getElementById('crawler-status');
+                if (data.is_crawling) {
+                    statusSpan.innerHTML = '<p style="color: green;">✅ Crawling in progress...</p>';
+                } else {
+                    statusSpan.innerHTML = '<p style="color: red;">🔴 Crawler stopped.</p>';
+                }
+            });
+    }
+    setInterval(updateStatus, 2000);
+    </script>
     <hr>
     <h2>Search in Index</h2>
     <form method="GET" action="/search">

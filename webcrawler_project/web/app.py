@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import threading
 import os
 from webcrawler_project.storage.persistance import load_json
@@ -32,10 +32,12 @@ def load_stopwords_exceptions():
                 word = line.strip()
                 if word:
                     exc.insert(word)
-                    
+
     return stop, exc
 
+
 app = Flask(__name__)
+
 
 crawl_thread = None
 crawl_manager = None
@@ -49,6 +51,7 @@ if os.path.exists("indexes/direct_index.json"):
     loaded_indexes["direct_index"] = load_json("indexes/direct_index.json")
 if os.path.exists("indexes/inverted_index.json"):
     loaded_indexes["inverted_index"] = load_json("indexes/inverted_index.json")
+
 
 def start_crawler(start_url, output_dir, thread_count, max_pages):
     global crawl_manager, is_crawling
@@ -75,6 +78,7 @@ def start_crawler(start_url, output_dir, thread_count, max_pages):
     save_json(direct_index, "indexes/direct_index.json")
     save_json(inverted_index, "indexes/inverted_index.json")
     is_crawling = False
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -118,6 +122,12 @@ def search():
         results = vectorial_search(query, loaded_indexes["inverted_index"], stop, exc)
 
     return render_template("search_results.html", query=query, results=results, mode=mode)
+
+
+@app.route("/status")
+def status():
+    return jsonify({"is_crawling": is_crawling})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
