@@ -12,6 +12,29 @@ from webcrawler_project.search.boolean_search import boolean_search
 from webcrawler_project.search.vectorial_search import vectorial_search
 
 
+def load_stopwords_exceptions():
+    stop = Trie()
+    exc = Trie()
+    stopwords_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "stopwords.txt")
+    if os.path.exists(stopwords_path):
+        with open(stopwords_path, "r", encoding="utf-8") as f:
+            for line in f:
+                word = line.strip()
+                if word:
+                    stop.insert(word)
+    else:
+        print(f"Warning: {stopwords_path} not found. No stopwords loaded.")
+
+    exceptions_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "exceptions.txt")
+    if os.path.exists(exceptions_path):
+        with open(exceptions_path, "r", encoding="utf-8") as f:
+            for line in f:
+                word = line.strip()
+                if word:
+                    exc.insert(word)
+                    
+    return stop, exc
+
 app = Flask(__name__)
 
 crawl_thread = None
@@ -44,9 +67,7 @@ def start_crawler(start_url, output_dir, thread_count, max_pages):
     for t in threads:
         t.join()
 
-    stop = Trie(); exc = Trie()
-    for w in ["the", "and", "is", "to", "in"]: stop.insert(w)
-    for w in ["python", "webcrawler", "2024"]: exc.insert(w)
+    stop, exc = load_stopwords_exceptions()
     
     direct_index = build_direct_index(output_dir, stop, exc)
     inverted_index = build_inverted_index(direct_index)
@@ -92,10 +113,7 @@ def search():
         results = boolean_search(query, loaded_indexes["inverted_index"], all_docs)
         results = [(doc, None) for doc in sorted(results)]  # scor None
     elif mode == "vectorial":
-        stop = Trie()
-        exc = Trie()
-        for w in ["the", "and", "is", "to", "in"]: stop.insert(w)
-        for w in ["python", "webcrawler", "2024"]: exc.insert(w)
+        stop, exc = load_stopwords_exceptions()
 
         results = vectorial_search(query, loaded_indexes["inverted_index"], stop, exc)
 

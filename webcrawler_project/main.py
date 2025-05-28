@@ -8,7 +8,7 @@ from webcrawler_project.index.direct_index import build_direct_index
 from webcrawler_project.index.inverted_index import build_inverted_index
 from webcrawler_project.storage.persistance import save_json
 import os
-
+#python -m webcrawler_project.main
 def start_crawling():
     manager = CrawlManager(MAX_WEB_PAGES)
     for url in START_URLS:
@@ -39,8 +39,16 @@ if __name__ == "__main__":
                     stopwords.insert(word)
     else:
         print(f"Warning: {stopwords_path} not found. No stopwords loaded.")
-    for word in ["python", "webcrawler"]:
-        exceptions.insert(word)
+    
+    exceptions_path = os.path.join(os.path.dirname(__file__), "exceptions.txt")
+    if os.path.exists(exceptions_path):
+        with open(exceptions_path, "r", encoding="utf-8") as f:
+            for line in f:
+                word = line.strip()
+                if word:
+                    exceptions.insert(word)
+    else:
+        print(f"Warning: {exceptions_path} not found. No exceptions loaded.")
 
     direct_index = build_direct_index("web_pages", stopwords, exceptions)
     inverted_index = build_inverted_index(direct_index)
