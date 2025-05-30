@@ -22,6 +22,8 @@ def boolean_search(query, inverted_index, all_documents):
         set: A set of document IDs that match the boolean query.
     """
     tokens = query.lower().split()
+    print("Query tokens:", tokens)
+    print("Index terms:", list(inverted_index.keys()))
     result = set()
     op = None
 

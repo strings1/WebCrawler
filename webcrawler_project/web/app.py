@@ -107,10 +107,12 @@ def index():
 def search():
     query = request.args.get("query", "")
     mode = request.args.get("mode", "boolean")
+    page = int(request.args.get("page", 1))
+    per_page = 10  # Number of results per page
     results = []
 
     if not query or not loaded_indexes["inverted_index"]:
-        return render_template("search_results.html", query=query, results=[])
+        return render_template("search_results.html", query=query, results=[], page=page, pages=1, mode=mode)
 
     if mode == "boolean":
         all_docs = set(loaded_indexes["direct_index"].keys())
@@ -118,10 +120,22 @@ def search():
         results = [(doc, None) for doc in sorted(results)]  # scor None
     elif mode == "vectorial":
         stop, exc = load_stopwords_exceptions()
-
         results = vectorial_search(query, loaded_indexes["inverted_index"], stop, exc)
 
-    return render_template("search_results.html", query=query, results=results, mode=mode)
+    total = len(results)
+    pages = (total + per_page - 1) // per_page
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_results = results[start:end]
+
+    return render_template(
+        "search_results.html",
+        query=query,
+        results=paginated_results,
+        page=page,
+        pages=pages,
+        mode=mode
+    )
 
 
 @app.route("/status")

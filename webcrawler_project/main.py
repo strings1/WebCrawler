@@ -6,6 +6,7 @@ import threading
 from webcrawler_project.utils.trie import Trie
 from webcrawler_project.index.direct_index import build_direct_index
 from webcrawler_project.index.inverted_index import build_inverted_index
+from webcrawler_project.search.boolean_search import boolean_search
 from webcrawler_project.storage.persistance import save_json
 import os
 #python -m webcrawler_project.main
@@ -56,3 +57,18 @@ if __name__ == "__main__":
     os.makedirs("indexes", exist_ok=True)
     save_json(direct_index, "indexes/direct_index.json")
     save_json(inverted_index, "indexes/inverted_index.json")
+
+    print("direct index:")
+    for term, postings in direct_index.items():
+        print(f"{term}: {postings}")
+
+    # if "robot" in direct_index:
+
+    # else:
+    #     print('No direct index entry for "robot".')
+    all_docs = set(direct_index.keys())
+
+    query = "facebook"
+    results = boolean_search(query, inverted_index, all_docs)
+    print(f"\nRezultate pentru interogarea: '{query}'") 
+    print(sorted(results))
