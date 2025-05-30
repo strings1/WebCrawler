@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebCrawler Config</title>
+    <!-- {% if is_crawling %}
+    <meta http-equiv="refresh" content="2">
+    {% endif %} -->
+</head>
+<body>
+    <h2>Configure the WebCrawler</h2>
+    <form method="POST">
+        <label>Start URL:</label><br>
+        <input type="text" name="start_url" value="https://www.robotstxt.org/"><br><br>
+
+        <label>Output Directory:</label><br>
+        <input type="text" name="output_dir" value="web_pages"><br><br>
+
+        <label>Max Pages:</label><br>
+        <input type="number" name="max_pages" value="100"><br><br>
+
+        <label>Thread Count:</label><br>
+        <input type="number" name="thread_count" value="5"><br><br>
+
+        <span id="crawler-status">
+            {% if is_crawling %}
+                <p style="color: green;">✅ Crawling in progress...</p>
+            {% else %}
+                <p style="color: red;">🔴 Crawler stopped.</p>
+            {% endif %}
+        </span>
+
+        <button type="submit">Start Crawl</button>
+    </form>
+    <script>
+    function updateStatus() {
+        fetch('/status')
+            .then(response => response.json())
+            .then(data => {
+                let statusSpan = document.getElementById('crawler-status');
+                if (data.is_crawling) {
+                    statusSpan.innerHTML = '<p style="color: green;">✅ Crawling in progress...</p>';
+                } else {
+                    statusSpan.innerHTML = '<p style="color: red;">🔴 Crawler stopped.</p>';
+                }
+            });
+    }
+    setInterval(updateStatus, 2000);
+    </script>
+    <hr>
+    <h2>Search in Index</h2>
+    <form method="GET" action="/search">
+    <label>Query:</label><br>
+    <input type="text" name="query" style="width: 400px;" required><br><br>
+
+    <label>Search Mode:</label><br>
+    <input type="radio" name="mode" value="boolean" checked> Boolean
+    <input type="radio" name="mode" value="vectorial"> Vectorial<br><br>
+
+    <button type="submit">Search</button>
+    </form>
+</body>
+</html>
